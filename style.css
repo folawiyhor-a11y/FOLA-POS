@@ -1,34 +1,16 @@
-body { margin: 0; font-family: 'Segoe UI', Arial; background: #0b1220; color: white; display: flex; }
-.page { width: 100%; height: 100vh; }
-.main-title { text-align: center; font-size: 3rem; margin-top: 50px; }
+@media print {
+    #mainApp, .side-nav, .topBar, .container, #loginPage { display: none !important; }
+    #printSection { display: block !important; }
+}
 
-/* SIDEBAR */
-.side-nav { width: 260px; background: #1f2937; height: 100vh; display: flex; flex-direction: column; border-right: 1px solid #374151; }
-.nav-brand { padding: 30px 20px; font-size: 1.5rem; font-weight: bold; color: #3b82f6; text-align: center; }
-.nav-list { flex-grow: 1; display: flex; flex-direction: column; }
-.nav-item { padding: 18px 25px; cursor: pointer; border-bottom: 1px solid #111827; transition: 0.2s; font-size: 0.95rem; }
-.nav-item:hover { background: #3b82f6; color: white; }
-
-/* CONTENT */
-.content-area { flex-grow: 1; overflow-y: auto; background: #0b1220; height: 100vh; }
-.page-content { padding: 30px; animation: fadeIn 0.3s; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-.topBar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1f2937; padding-bottom: 20px; margin-bottom: 20px; }
-.container { display: flex; gap: 20px; height: 70vh; }
-.left { flex: 2; overflow-y: auto; }
-.right { flex: 1; background: #111827; padding: 20px; border-radius: 12px; }
-
-/* POS ELEMENTS */
-#menuGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-.menuItem { background: #1f2937; padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; }
-#tableGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; }
-.tableBox { background: #10b981; padding: 25px 10px; text-align: center; border-radius: 8px; cursor: pointer; font-weight: bold; }
-.orderItem { background: #1f2937; padding: 10px; margin-bottom: 5px; border-radius: 5px; font-size: 0.9em; }
-
-/* FORM & SLIP */
-input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: none; box-sizing: border-box; }
-button { background: #3b82f6; color: white; cursor: pointer; font-weight: bold; }
-.slip-view { background: white; color: black; padding: 20px; border-radius: 8px; }
-.inventory-row { display: flex; justify-content: space-between; background: #1f2937; padding: 10px; margin-bottom: 5px; }
-.inventory-row input { width: 80px; margin: 0; }
+body { font-family: sans-serif; margin:0; background: #111827; color: white; }
+.side-nav { width: 250px; background: #1f2937; padding: 20px; border-right: 1px solid #374151; }
+.nav-item { padding: 15px; cursor: pointer; border-radius: 8px; margin-bottom: 5px; }
+.nav-item:hover { background: #374151; }
+.content-area { flex-grow: 1; padding: 20px; overflow-y: auto; }
+.tableGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; }
+.tableBox { background: #374151; padding: 20px; text-align: center; cursor: pointer; border-radius: 10px; }
+.back-btn { background: #4b5563; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+.login-container { background: #1f2937; padding: 30px; border-radius: 12px; width: 300px; margin: 100px auto; display: flex; flex-direction: column; gap: 15px; }
+input, select { padding: 12px; border-radius: 6px; border: 1px solid #374151; background: #111827; color: white; }
+button { padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
