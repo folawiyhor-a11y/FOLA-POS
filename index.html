@@ -11,22 +11,30 @@
 <div id="loginPage" class="page">
     <h1 class="main-title">FOLA POS SYSTEM</h1>
     <div class="login-container">
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="login()">Secure Login</button>
+        <input type="text" id="loginUser" placeholder="Username">
+        <input type="password" id="loginPass" placeholder="Password">
+        <button onclick="handleLogin()">Secure Login</button>
     </div>
 </div>
 
 <div id="mainApp" style="display:none; display: flex; height: 100vh;">
     
     <div class="side-nav">
-        <div class="nav-brand">FOLA POS PRO</div>
+        <div class="nav-brand">FOLA POS</div>
         <div class="nav-list">
-            <div class="nav-item" onclick="goToTables()">🪑 Order Management</div>
-            <div class="nav-item" onclick="goToAddMenu()">➕ Menu Management</div>
-            <div class="nav-item" onclick="goToInventory()">📦 Inventory Tracking</div>
-            <div class="nav-item" onclick="goToSales()">📊 Sales & Audit</div>
-            <div class="nav-item" onclick="goToExpenses()">💸 Expense Tracking</div>
+            <div class="nav-item" onclick="goToTables()">🪑 Sales (Select Table)</div>
+            
+            <div id="managerLinks" style="display:none;">
+                <div class="nav-item" onclick="goToInventory()">📦 Stock Control</div>
+                <div class="nav-item" onclick="goToSales()">📊 Sales & Audit</div>
+                <div class="nav-item" onclick="goToExpenses()">💸 Expense Tracker</div>
+            </div>
+
+            <div id="adminLinks" style="display:none;">
+                <div class="nav-item" onclick="goToAddMenu()">➕ Menu Settings</div>
+                <div class="nav-item" onclick="goToUserMgmt()">👥 User Management</div>
+            </div>
+            
             <div class="nav-item" onclick="signOut()" style="margin-top: auto; color: #ef4444; border-top: 1px solid #374151;">🚪 Logout</div>
         </div>
     </div>
@@ -34,68 +42,105 @@
     <div class="content-area">
         
         <div id="tablePage" class="page-content" style="display:none;">
-            <div class="topBar"><h2>Table Assignment</h2></div>
+            <div class="topBar"><h2>Table Dashboard</h2><button onclick="signOut()" class="back-btn">Exit System</button></div>
             <div id="tableGrid"></div>
         </div>
 
         <div id="posPage" class="page-content" style="display:none;">
-            <div class="topBar">
-                <h3 id="activeTableTitle"></h3>
-                <div style="display:flex; gap:10px;">
-                    <button onclick="openSplitModal()" style="background:#6366f1; width:auto;">Split Bill</button>
-                    <button onclick="openPaymentModal()" style="background:#10b981; width:auto;">Finish & Pay</button>
-                </div>
-            </div>
+            <div class="topBar"><h3 id="activeTableTitle"></h3><button onclick="goToTables()" class="back-btn">← Back to Tables</button></div>
             <div class="container">
                 <div class="left"><div id="menuGrid"></div></div>
                 <div class="right">
-                    <select id="orderType"><option>Dine-In</option><option>Takeaway</option><option>Delivery</option></select>
-                    <input type="text" id="orderNote" placeholder="Special Instructions (e.g. No Spicy)">
+                    <h4>Punch Order</h4>
+                    <input type="text" id="orderNote" placeholder="Instructions">
                     <div id="orderBox"></div>
                     <hr>
-                    <h3 style="color:#10b981;">Grand Total: ₦<span id="total">0</span></h3>
+                    <h3 style="color:#10b981;">Total: ₦<span id="total">0</span></h3>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <button onclick="openSplitModal()" style="background:#6366f1;">Split Bill</button>
+                        <button onclick="openPaymentModal()" style="background:#10b981;">Pay & Print</button>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <div id="userMgmtPage" class="page-content" style="display:none;">
+            <div class="topBar"><h2>User Management</h2><button onclick="goToTables()" class="back-btn">← Back</button></div>
+            <div class="login-container">
+                <input type="text" id="newUsername" placeholder="New Username">
+                <input type="password" id="newPassword" placeholder="Set Password">
+                <select id="newUserRole">
+                    <option value="waiter">Waiter</option>
+                    <option value="manager">Manager</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <button onclick="createUser()">Create Account</button>
+            </div>
+            <div id="userList" class="report-container"></div>
+        </div>
+
         <div id="salesPage" class="page-content" style="display:none;">
-            <div class="topBar"><h2>Financial Audit Trail</h2></div>
-            <div class="report-controls">
-                <input type="date" id="reportDate" onchange="renderFullReport()">
-            </div>
-            <div class="audit-grid">
-                <div id="auditLog" class="report-container" style="background:#1f2937; height:300px; overflow-y:auto; border-radius:8px; font-size:0.85em; padding:15px;"></div>
-                <div id="reconView" class="slip-view" style="margin:0;"></div>
-            </div>
+            <div class="topBar"><h2>Financial Audit</h2><button onclick="goToTables()" class="back-btn">← Back</button></div>
+            <input type="date" id="reportDate" onchange="renderFullReport()">
+            <div id="auditLog" class="audit-box"></div>
+            <div id="reconView" class="slip-view"></div>
         </div>
 
         <div id="expensePage" class="page-content" style="display:none;">
-            <div class="topBar"><h2>Record Daily Expenses</h2></div>
+            <div class="topBar"><h2>Expenses</h2><button onclick="goToTables()" class="back-btn">← Back</button></div>
             <div class="login-container">
-                <input type="text" id="expDesc" placeholder="Description (e.g. Diesel/Market)">
-                <input type="number" id="expAmount" placeholder="Amount (₦)">
-                <select id="expCat"><option>Utilities</option><option>Raw Materials</option><option>Other</option></select>
-                <button onclick="logExpense()">Log Expense</button>
+                <input type="text" id="expDesc" placeholder="Description"><input type="number" id="expAmount" placeholder="Amount"><button onclick="logExpense()">Save</button>
             </div>
-            <div id="expenseList" class="report-container"></div>
+        </div>
+        
+        <div id="inventoryPage" class="page-content" style="display:none;">
+            <div class="topBar"><h2>Inventory</h2><button onclick="goToTables()" class="back-btn">← Back</button></div>
+            <div id="inventoryList"></div>
         </div>
 
         <div id="addMenuPage" class="page-content" style="display:none;">
-            <div class="topBar"><h2>Menu Management</h2></div>
+            <div class="topBar"><h2>Menu</h2><button onclick="goToTables()" class="back-btn">← Back</button></div>
             <div class="login-container">
-                <input type="text" id="newItemName" placeholder="Item Name">
-                <input type="number" id="newItemPrice" placeholder="Price">
-                <select id="newItemCategory"><option value="Food">Food</option><option value="Drinks">Drinks</option></select>
-                <button onclick="saveNewItem()">Add to Menu</button>
+                <input type="text" id="newItemName" placeholder="Name"><input type="number" id="newItemPrice" placeholder="Price"><button onclick="saveNewItem()">Save</button>
             </div>
         </div>
-
-        <div id="inventoryPage" class="page-content" style="display:none;">
-            <div class="topBar"><h2>Inventory & Stock Levels</h2></div>
-            <div id="inventoryList" class="report-container"></div>
-        </div>
-
     </div>
+</div>
+
+<div id="printSection" style="display:none; font-family: monospace; width: 300px; padding: 10px; color: black; background: white;">
+    <center>
+        <h2 style="margin:0;">FOLA RESTAURANT</h2>
+        <p style="font-size: 11px;">3 IRETI STREET SABO YABA<br>08130893832</p>
+    </center>
+    <hr style="border: 1px dashed black;">
+    <div style="font-size: 12px;">
+        <p><b>ACCOUNT DETAILS:</b></p>
+        <p>FOLA RESTAURANT (OPAY)<br>6104491165 / 6104491168</p>
+    </div>
+    <hr style="border: 1px dashed black;">
+    <p style="text-align:center;">PROFORMA INVOICE</p>
+    <hr style="border: 1px dashed black;">
+    <div style="display:flex; justify-content:space-between; font-size: 12px;">
+        <span>Table: <span id="pTable"></span></span>
+        <span>Covers: 1</span>
+    </div>
+    <hr style="border: 1px dashed black;">
+    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size: 12px;">
+        <span style="width:50%;">Description</span>
+        <span>Qty</span>
+        <span>Value</span>
+    </div>
+    <hr style="border: 1px dashed black;">
+    <div id="pItems" style="font-size: 12px;"></div>
+    <hr style="border: 1px dashed black;">
+    <div style="text-align:right; font-size: 13px;">
+        <p>Sub-Total: ₦<span id="pSub"></span></p>
+        <p>Service Charge: ₦<span id="pService"></span></p>
+        <p><b>TOTAL: ₦<span id="pTotal"></span></b></p>
+    </div>
+    <hr style="border: 1px dashed black;">
+    <p style="font-size: 10px;">Waitron: <span id="pStaff"></span></p>
+    <p style="font-size: 10px;">Time: <span id="pTime"></span></p>
 </div>
 
 <script src="app.js"></script>
