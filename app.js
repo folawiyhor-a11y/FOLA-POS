@@ -1,3 +1,4 @@
+/* GLOBAL STATE */
 let currentUser = {};
 let activeTable = null;
 
@@ -8,14 +9,14 @@ let menu = JSON.parse(localStorage.getItem("fola_menu")) || {
 
 let salesHistory = JSON.parse(localStorage.getItem("fola_sales")) || [];
 let orders = JSON.parse(localStorage.getItem("fola_orders")) || {};
+let orderNotes = JSON.parse(localStorage.getItem("fola_notes")) || {};
 
+/* NAVIGATION */
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
     document.getElementById(pageId).style.display = 'block';
-    if (pageId !== 'posPage') document.getElementById('billPrintView').style.display = 'none';
 }
 
-/* NAVIGATION */
 function goToDashboard() { showPage("dashboardPage"); }
 function goToTables() { showPage("tablePage"); renderTables(); }
 function goToAddMenu() { showPage("addMenuPage"); }
@@ -25,9 +26,9 @@ function goToSales() {
     showPage("salesPage");
     renderSalesReport();
 }
-function signOut() { currentUser = {}; showPage("loginPage"); }
+function signOut() { currentUser = {}; location.reload(); }
 
-/* LOGIN */
+/* LOGIN LOGIC */
 function login() {
     const u = document.getElementById("username").value.trim();
     const p = document.getElementById("password").value.trim();
@@ -39,11 +40,11 @@ function login() {
         currentUser = { role: "waiter" };
         goToDashboard();
     } else {
-        alert("Invalid Login Credentials. Please check your username and password.");
+        alert("Invalid Login. Use Admin / 1842");
     }
 }
 
-/* INVENTORY & MENU */
+/* MENU & INVENTORY MANAGEMENT */
 function saveNewItem() {
     const name = document.getElementById("newItemName").value.trim();
     const price = parseInt(document.getElementById("newItemPrice").value);
@@ -51,7 +52,7 @@ function saveNewItem() {
     if (!name || !price) return alert("Please fill in all details");
     menu[category].push({ name, price, stock: 0 });
     saveAll();
-    alert("Item added to " + category);
+    alert("Item added!");
     goToDashboard();
 }
 
@@ -61,7 +62,11 @@ function renderInventory() {
     Object.keys(menu).forEach(cat => {
         list.innerHTML += `<h3>${cat}</h3>`;
         menu[cat].forEach((item, index) => {
-            list.innerHTML += ` <div class="inventory-row"> <span>${item.name}</span> <div>Stock: <input type="number" value="${item.stock}" onchange="updateStock('${cat}', ${index}, this.value)"></div> </div>`;
+            list.innerHTML += `
+                <div class="inventory-row">
+                    <span>${item.name}</span>
+                    <div>Stock: <input type="number" value="${item.stock}" onchange="updateStock('${cat}', ${index}, this.value)"></div>
+                </div>`;
         });
     });
 }
@@ -87,6 +92,7 @@ function renderTables() {
 function openPOS() {
     showPage("posPage");
     document.getElementById("activeTableTitle").innerText = activeTable;
+    document.getElementById("orderNote").value = orderNotes[activeTable] || "";
     renderMenu();
     renderOrder();
 }
@@ -106,7 +112,7 @@ function renderMenu() {
 }
 
 function addItem(cat, item) {
-    if (item.stock <= 0) return alert("This item is currently out of stock!");
+    if (item.stock <= 0) return alert("Out of stock!");
     if (!orders[activeTable]) orders[activeTable] = [];
     let exist = orders[activeTable].find(i => i.name === item.name);
     if (exist) exist.qty++;
@@ -138,7 +144,6 @@ function changeQty(index, amount) {
 
 function renderOrder() {
     let box = document.getElementById("orderBox");
-    if (!box) return;
     box.innerHTML = "";
     let subtotal = 0;
 
@@ -158,143 +163,101 @@ function renderOrder() {
             </div>`;
     });
 
-    let serviceCharge = subtotal * 0.10;
+    let service = subtotal * 0.10;
     let tax = subtotal * 0.025;
-    let grandTotal = subtotal + serviceCharge + tax;
+    let grand = subtotal + service + tax;
 
     box.innerHTML += `
-        <div style="margin-top:12px; border-top:1px solid #374151; padding-top:10px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px; color:#9ca3af;">
-                <span>Subtotal:</span>
-                <span>₦${subtotal.toLocaleString()}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px; color:#9ca3af;">
-                <span>Service Charge (10%):</span>
-                <span>₦${serviceCharge.toLocaleString()}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px; color:#9ca3af;">
-                <span>Tax (2.5%):</span>
-                <span>₦${tax.toLocaleString()}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.1em; color:#10b981;">
-                <span>Grand Total:</span>
-                <span>₦${grandTotal.toLocaleString()}</span>
-            </div>
-        </div>`;
-
-    let totalElement = document.getElementById("total");
-    if (totalElement) totalElement.innerText = grandTotal.toLocaleString();
-}
-
-function printBill() {
-    if (!orders[activeTable] || orders[activeTable].length === 0) return alert("Order is empty!");
-    const printView = document.getElementById('billPrintView');
-    const itemsList = document.getElementById('billItemsList');
-
-    document.getElementById('billTableTitle').innerText = activeTable;
-    document.getElementById('billDateTime').innerText = new Date().toLocaleString();
-    itemsList.innerHTML = `<div class="slip-item"><b>Item</b><b>Qty</b><b>Total</b></div>`;
-
-    let subtotal = 0;
-    orders[activeTable].forEach(item => {
-        const itemTotal = item.price * item.qty;
-        subtotal += itemTotal;
-        itemsList.innerHTML += `
-            <div class="slip-item">
-                <span>${item.name}</span>
-                <span>${item.qty}</span>
-                <span>₦${itemTotal.toLocaleString()}</span>
-            </div>`;
-    });
-
-    let serviceCharge = subtotal * 0.10;
-    let tax = subtotal * 0.025;
-    let grandTotal = subtotal + serviceCharge + tax;
-
-    itemsList.innerHTML += `
-        <div style="margin-top:8px; border-top:1px dashed #ccc; padding-top:8px;">
+        <div style="margin-top:10px; border-top:1px solid #444; padding-top:10px; font-size:0.9em;">
             <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span>₦${subtotal.toLocaleString()}</span></div>
-            <div style="display:flex; justify-content:space-between;"><span>Service Charge (10%):</span><span>₦${serviceCharge.toLocaleString()}</span></div>
+            <div style="display:flex; justify-content:space-between;"><span>Service (10%):</span><span>₦${service.toLocaleString()}</span></div>
             <div style="display:flex; justify-content:space-between;"><span>Tax (2.5%):</span><span>₦${tax.toLocaleString()}</span></div>
         </div>`;
 
-    document.getElementById('billTotal').innerText = "Grand Total: ₦" + grandTotal.toLocaleString();
-    printView.style.display = 'block';
+    document.getElementById("total").innerText = grand.toLocaleString();
+    
+    // Save note to table state
+    document.getElementById("orderNote").oninput = (e) => {
+        orderNotes[activeTable] = e.target.value;
+        saveAll();
+    };
+}
+
+/* CHECKOUT & PRINTING */
+function printBill() {
+    if (!orders[activeTable] || orders[activeTable].length === 0) return alert("Order is empty!");
+    
+    document.getElementById('billTableTitle').innerText = activeTable;
+    document.getElementById('billDateTime').innerText = new Date().toLocaleString();
+    document.getElementById('billNoteView').innerText = "Notes: " + (orderNotes[activeTable] || "None");
+
+    let list = document.getElementById('billItemsList');
+    list.innerHTML = "";
+    let subtotal = 0;
+
+    orders[activeTable].forEach(item => {
+        subtotal += item.price * item.qty;
+        list.innerHTML += `<div class="slip-item"><span>${item.name}</span><span>x${item.qty}</span><span>₦${(item.price * item.qty).toLocaleString()}</span></div>`;
+    });
+
+    let total = subtotal * 1.125;
+    document.getElementById('billTotal').innerText = "Grand Total: ₦" + total.toLocaleString();
+    
+    document.getElementById('billPrintView').style.display = 'block';
     window.print();
 }
 
 function openPaymentModal() {
     if (!orders[activeTable] || orders[activeTable].length === 0) return alert("Order is empty!");
-    const method = prompt("Select Payment Method:\n1. Cash\n2. Transfer\n3. Card");
-    let payType = "";
-    if (method === "1") payType = "Cash";
-    else if (method === "2") payType = "Transfer";
-    else if (method === "3") payType = "Card";
-    else return alert("Invalid selection! Please enter 1, 2, or 3.");
+    const method = prompt("Payment Method:\n1. Cash\n2. Transfer\n3. Card");
+    let payType = method === "1" ? "Cash" : method === "2" ? "Transfer" : method === "3" ? "Card" : "";
+    if (!payType) return alert("Invalid selection.");
     checkout(payType);
 }
 
 function checkout(payType) {
     let subtotal = 0;
     orders[activeTable].forEach(item => subtotal += item.price * item.qty);
-    let serviceCharge = subtotal * 0.10;
-    let tax = subtotal * 0.025;
-    let grandTotal = subtotal + serviceCharge + tax;
+    let total = subtotal * 1.125;
 
     salesHistory.push({
         date: new Date().toISOString().split('T')[0],
-        items: orders[activeTable],
-        subtotal: subtotal,
-        serviceCharge: serviceCharge,
-        tax: tax,
-        total: grandTotal,
-        paymentMethod: payType
+        total: total,
+        method: payType,
+        items: orders[activeTable]
     });
+
     delete orders[activeTable];
+    delete orderNotes[activeTable];
     saveAll();
-    alert("✅ Payment Successful via " + payType + "\nGrand Total: ₦" + grandTotal.toLocaleString());
+    alert("✅ Checkout Successful!");
     goToDashboard();
+}
+
+/* SALES REPORTING */
+function renderSalesReport() {
+    const selectedDate = document.getElementById("reportDate").value;
+    const list = document.getElementById("salesItemsList");
+    let total = 0;
+    let methods = { Cash: 0, Transfer: 0, Card: 0 };
+
+    salesHistory.filter(s => s.date === selectedDate).forEach(sale => {
+        total += sale.total;
+        methods[sale.method] += sale.total;
+    });
+
+    list.innerHTML = `
+        <div class="slip-item"><span><b>Payment Type</b></span><span></span><span><b>Total</b></span></div>
+        <div class="slip-item"><span>Cash Sales</span><span></span><span>₦${methods.Cash.toLocaleString()}</span></div>
+        <div class="slip-item"><span>Transfer Sales</span><span></span><span>₦${methods.Transfer.toLocaleString()}</span></div>
+        <div class="slip-item"><span>Card Sales</span><span></span><span>₦${methods.Card.toLocaleString()}</span></div>
+    `;
+    document.getElementById("slipTotal").innerText = "Total Daily Revenue: ₦" + total.toLocaleString();
 }
 
 function saveAll() {
     localStorage.setItem("fola_menu", JSON.stringify(menu));
     localStorage.setItem("fola_sales", JSON.stringify(salesHistory));
     localStorage.setItem("fola_orders", JSON.stringify(orders));
-}
-
-function renderSalesReport() {
-    const selectedDate = document.getElementById("reportDate").value;
-    const list = document.getElementById("salesItemsList");
-    list.innerHTML = "";
-    let dayTotal = 0;
-    let summary = {};
-
-    salesHistory.filter(s => s.date === selectedDate).forEach(sale => {
-        sale.items.forEach(item => {
-            if (!summary[item.name]) summary[item.name] = { qty: 0, price: item.price };
-            summary[item.name].qty += item.qty;
-        });
-    });
-
-    Object.keys(summary).forEach(name => {
-        let s = summary[name];
-        let total = s.qty * s.price;
-        dayTotal += total;
-        list.innerHTML += `
-            <div class="slip-item">
-                <span>${name}</span>
-                <span>${s.qty}</span>
-                <span>₦${total.toLocaleString()}</span>
-            </div>`;
-    });
-
-    let serviceCharge = dayTotal * 0.10;
-    let tax = dayTotal * 0.025;
-    let grandTotal = dayTotal + serviceCharge + tax;
-
-    document.getElementById("slipTotal").innerHTML = `
-        <div style="font-size:0.9em; color:#555;">Subtotal: ₦${dayTotal.toLocaleString()}</div>
-        <div style="font-size:0.9em; color:#555;">Service Charge (10%): ₦${serviceCharge.toLocaleString()}</div>
-        <div style="font-size:0.9em; color:#555;">Tax (2.5%): ₦${tax.toLocaleString()}</div>
-        <div style="font-weight:bold; font-size:1.1em;">Total Sales: ₦${grandTotal.toLocaleString()}</div>`;
+    localStorage.setItem("fola_notes", JSON.stringify(orderNotes));
 }
