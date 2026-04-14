@@ -3,146 +3,328 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOLA POS SYSTEM - PRO</title>
-    <link rel="stylesheet" href="style.css">
+    <title>FOLA POS SYSTEM - MASTER</title>
+    <style>
+        /* GLOBAL THEME */
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white; overflow: hidden; }
+        
+        /* 1. FRONT PAGE: LOGIN ONLY */
+        .full-center-gate { display: flex; justify-content: center; align-items: center; height: 100vh; width: 100%; background: #0f172a; z-index: 9999; position: absolute; }
+        .login-card { background: #1e293b; padding: 40px; border-radius: 15px; border: 1px solid #3b82f6; text-align: center; width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .login-card h1 { color: #3b82f6; margin-bottom: 5px; }
+        .login-card input { width: 90%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; }
+        .login-card button { width: 100%; padding: 12px; background: #3b82f6; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
+
+        /* 2. MAIN LAYOUT (HIDDEN UNTIL LOGIN) */
+        #mainApp { display: none; height: 100vh; width: 100%; flex-direction: row; }
+        .side-nav { width: 240px; background: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; }
+        .nav-item { padding: 15px; cursor: pointer; border-bottom: 1px solid #334155; font-size: 14px; }
+        .nav-item:hover { background: #334155; }
+        .content-area { flex-grow: 1; padding: 20px; overflow-y: auto; background: #0f172a; }
+
+        /* 3. TABLE GRID (1-100 BLOCKS) */
+        .table-grid-100 { display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px; margin-top: 15px; }
+        .table-box { background: #334155; padding: 20px 5px; text-align: center; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        .table-box.occupied { background: #f59e0b; border: 2px solid #fbbf24; }
+
+        /* 4. POS SPLIT SCREEN (LEFT: MENU | RIGHT: BILL) */
+        .pos-split { display: flex; gap: 20px; height: 82vh; margin-top: 10px; }
+        .menu-side { flex: 2; background: #1e293b; padding: 15px; border-radius: 12px; overflow-y: auto; }
+        .bill-side { flex: 1.5; background: #0f172a; border: 1px solid #334155; padding: 15px; border-radius: 12px; display: flex; flex-direction: column; }
+        
+        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .menu-btn { background: #3b82f6; color: white; border: none; padding: 18px 5px; border-radius: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; }
+
+        .bill-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 5px; border-bottom: 1px solid #334155; }
+        .qty-btns { display: flex; align-items: center; gap: 8px; }
+        .qty-btns button { background: #475569; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+
+        /* TOTALS AREA */
+        .totals-section { margin-top: auto; padding-top: 15px; border-top: 2px solid #334155; }
+        .pay-btn { background: #10b981; width: 100%; padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+
+        /* ADMIN FORMS */
+        .admin-card { background: #1e293b; padding: 20px; border-radius: 12px; max-width: 400px; margin-bottom: 20px; border: 1px solid #334155; }
+        .admin-card input, .admin-card select { width: 90%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #475569; background: #0f172a; color: white; }
+
+        /* PRINTING */
+        @media print {
+            body * { display: none !important; }
+            #printSection, #printSection * { display: block !important; visibility: visible; }
+            #printSection { position: absolute; left: 0; top: 0; width: 100%; color: black !important; background: white !important; }
+        }
+    </style>
 </head>
 <body>
 
-<div id="loginPage" class="page">
-    <h1 class="main-title">FOLA POS SYSTEM</h1>
-    <div class="login-container">
-        <input type="text" id="loginUser" placeholder="Username">
-        <input type="password" id="loginPass" placeholder="Password">
-        <button onclick="handleLogin()">Secure Login</button>
+<div id="loginPage" class="full-center-gate">
+    <div class="login-card">
+        <h1>FOLA POS</h1>
+        <p style="color: #94a3b8; font-size: 12px;">3 IRETI STREET, SABO YABA</p>
+        <div style="margin-top: 20px;">
+            <input type="text" id="loginUser" placeholder="Username">
+            <input type="password" id="loginPass" placeholder="Password">
+            <button onclick="handleLogin()">SECURE LOGIN</button>
+        </div>
     </div>
 </div>
 
-<div id="mainApp" style="display:none; display: flex; height: 100vh;">
-    
+<div id="mainApp">
     <div class="side-nav">
-        <div class="nav-brand">FOLA POS</div>
-        <div class="nav-list">
-            <div class="nav-item" onclick="goToTables()">🪑 Sales (Select Table)</div>
-            
-            <div id="managerLinks" style="display:none;">
-                <div class="nav-item" onclick="goToInventory()">📦 Stock Control</div>
-                <div class="nav-item" onclick="goToSales()">📊 Sales & Audit</div>
-                <div class="nav-item" onclick="goToExpenses()">💸 Expense Tracker</div>
-            </div>
-
-            <div id="adminLinks" style="display:none;">
-                <div class="nav-item" onclick="goToAddMenu()">➕ Menu Settings</div>
-                <div class="nav-item" onclick="goToUserMgmt()">👥 User Management</div>
-            </div>
-            
-            <div class="nav-item" onclick="signOut()" style="margin-top: auto; color: #ef4444; border-top: 1px solid #374151;">🚪 Logout</div>
+        <div style="padding: 20px; font-weight: bold; color: #3b82f6; font-size: 20px; border-bottom: 1px solid #334155;">FOLA SYSTEM</div>
+        <div class="nav-item" onclick="goToTables()">🪑 Select Table (1-100)</div>
+        <div id="adminLinks" style="display:none;">
+            <div class="nav-item" onclick="goToSales()">📊 Sales & Audit</div>
+            <div class="nav-item" onclick="goToInventory()">📦 Stock Control</div>
+            <div class="nav-item" onclick="goToExpenses()">💸 Expenses</div>
+            <div class="nav-item" onclick="goToAddMenu()">➕ Menu Settings</div>
+            <div class="nav-item" onclick="goToUserMgmt()">👥 User Management</div>
         </div>
+        <div class="nav-item" onclick="location.reload()" style="margin-top: auto; color: #ef4444; border-top: 1px solid #334155;">🚪 Logout</div>
     </div>
 
     <div class="content-area">
         
-        <div id="tablePage" class="page-content" style="display:none;">
-            <div class="topBar"><h2>Table Dashboard</h2><button onclick="signOut()" class="back-btn">Exit System</button></div>
-            <div id="tableGrid"></div>
+        <div id="tablePage" class="page-content">
+            <h2 style="margin: 0;">Table Dashboard</h2>
+            <div id="tableGrid" class="table-grid-100"></div>
         </div>
 
         <div id="posPage" class="page-content" style="display:none;">
-            <div class="topBar"><h3 id="activeTableTitle"></h3><button onclick="goToTables()" class="back-btn">← Back to Tables</button></div>
-            <div class="container">
-                <div class="left"><div id="menuGrid"></div></div>
-                <div class="right">
-                    <h4>Punch Order</h4>
-                    <input type="text" id="orderNote" placeholder="Instructions">
-                    <div id="orderBox"></div>
-                    <hr>
-                    <h3 style="color:#10b981;">Total: ₦<span id="total">0</span></h3>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                        <button onclick="openSplitModal()" style="background:#6366f1;">Split Bill</button>
-                        <button onclick="openPaymentModal()" style="background:#10b981;">Pay & Print</button>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 id="activeTableTitle" style="color: #3b82f6;">Table</h2>
+                <button onclick="goToTables()" style="padding: 8px 15px; border-radius: 5px; border: none; background: #475569; color: white; cursor: pointer;">← Back to Grid</button>
+            </div>
+            <div class="pos-split">
+                <div class="menu-side">
+                    <h3>Available Menu</h3>
+                    <div id="menuGrid" class="menu-grid"></div>
+                </div>
+                <div class="bill-side">
+                    <h3>Live Order</h3>
+                    <div id="orderBox" style="flex-grow: 1; overflow-y: auto;"></div>
+                    <div class="totals-section">
+                        <div style="display:flex; justify-content:space-between;"><span>Subtotal</span><span id="subT">₦0</span></div>
+                        <div style="display:flex; justify-content:space-between; font-size: 13px; color: #94a3b8; margin: 5px 0;"><span>Tax & Service (12.5%)</span><span id="taxT">₦0</span></div>
+                        <div style="display:flex; justify-content:space-between; font-size: 22px; font-weight: bold; color: #10b981; margin-top: 10px;"><span>Total</span><span id="grandT">₦0</span></div>
+                        <button class="pay-btn" onclick="processPayment()">PAY & PRINT RECEIPT</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="userMgmtPage" class="page-content" style="display:none;">
-            <div class="topBar"><h2>User Management</h2><button onclick="goToTables()" class="back-btn">← Back</button></div>
-            <div class="login-container">
-                <input type="text" id="newUsername" placeholder="New Username">
-                <input type="password" id="newPassword" placeholder="Set Password">
-                <select id="newUserRole">
-                    <option value="waiter">Waiter</option>
-                    <option value="manager">Manager</option>
-                    <option value="admin">Admin</option>
-                </select>
-                <button onclick="createUser()">Create Account</button>
+        <div id="addMenuPage" class="page-content" style="display:none;">
+            <h2>Menu Settings</h2>
+            <div class="admin-card">
+                <input type="text" id="itemName" placeholder="Item Name (e.g. Catfish)">
+                <input type="number" id="itemPrice" placeholder="Price (₦)">
+                <button onclick="saveItem()" style="background: #3b82f6; color: white; border: none; width: 100%; padding: 10px; border-radius: 5px;">Save to Menu</button>
             </div>
-            <div id="userList" class="report-container"></div>
+        </div>
+
+        <div id="userMgmtPage" class="page-content" style="display:none;">
+            <h2>User Management</h2>
+            <div class="admin-card">
+                <input type="text" id="newU" placeholder="Username">
+                <input type="password" id="newP" placeholder="Password">
+                <select id="newR"><option value="waiter">Waiter</option><option value="admin">Admin</option></select>
+                <button onclick="saveUser()" style="background: #3b82f6; color: white; border: none; width: 100%; padding: 10px; border-radius: 5px;">Create Account</button>
+            </div>
+            <div id="userListDisplay"></div>
         </div>
 
         <div id="salesPage" class="page-content" style="display:none;">
-            <div class="topBar"><h2>Financial Audit</h2><button onclick="goToTables()" class="back-btn">← Back</button></div>
-            <input type="date" id="reportDate" onchange="renderFullReport()">
-            <div id="auditLog" class="audit-box"></div>
-            <div id="reconView" class="slip-view"></div>
+            <h2>Financial Audit</h2>
+            <input type="date" id="auditDate" onchange="renderAudit()" style="padding: 10px; margin-bottom: 20px;">
+            <div id="auditReport" style="background: #1e293b; padding: 20px; border-radius: 10px;"></div>
         </div>
+    </div>
+</div>
 
-        <div id="expensePage" class="page-content" style="display:none;">
-            <div class="topBar"><h2>Expenses</h2><button onclick="goToTables()" class="back-btn">← Back</button></div>
-            <div class="login-container">
-                <input type="text" id="expDesc" placeholder="Description"><input type="number" id="expAmount" placeholder="Amount"><button onclick="logExpense()">Save</button>
-            </div>
-        </div>
+<div id="printSection" style="display:none;"></div>
+
+<script>
+    // 1. DATA INITIALIZATION
+    let users = JSON.parse(localStorage.getItem("f_users")) || [{user:"Admin", pass:"1842", role:"admin"}];
+    let menu = JSON.parse(localStorage.getItem("f_menu")) || [];
+    let sales = JSON.parse(localStorage.getItem("f_sales")) || [];
+    let orders = JSON.parse(localStorage.getItem("f_orders")) || {};
+    let activeTable = null;
+    let loggedInUser = null;
+
+    // 2. CORE LOGIC
+    function handleLogin() {
+        const u = document.getElementById("loginUser").value.trim();
+        const p = document.getElementById("loginPass").value.trim();
+        const found = users.find(x => x.user === u && x.pass === p);
+        if(found) {
+            loggedInUser = found;
+            document.getElementById("loginPage").style.display = "none";
+            document.getElementById("mainApp").style.display = "flex";
+            if(found.role === "admin") document.getElementById("adminLinks").style.display = "block";
+            goToTables();
+        } else { alert("Login Invalid"); }
+    }
+
+    function showPhase(id) {
+        document.querySelectorAll(".page-content").forEach(p => p.style.display = "none");
+        document.getElementById(id).style.display = "block";
+    }
+
+    function goToTables() { showPhase("tablePage"); renderTables(); }
+    function goToAddMenu() { showPhase("addMenuPage"); }
+    function goToUserMgmt() { showPhase("userMgmtPage"); renderUserList(); }
+    function goToSales() { showPhase("salesPage"); renderAudit(); }
+
+    // 3. TABLE MANAGEMENT (1-100)
+    function renderTables() {
+        const grid = document.getElementById("tableGrid");
+        grid.innerHTML = "";
+        for (let i = 1; i <= 100; i++) {
+            const tId = "Table " + i;
+            const div = document.createElement("div");
+            div.className = "table-box" + (orders[tId] && orders[tId].length > 0 ? " occupied" : "");
+            div.innerText = i;
+            div.onclick = () => { activeTable = tId; openPOS(); };
+            grid.appendChild(div);
+        }
+    }
+
+    // 4. POS & BILLING
+    function openPOS() {
+        showPhase("posPage");
+        document.getElementById("activeTableTitle").innerText = activeTable;
+        renderMenu();
+        renderOrder();
+    }
+
+    function renderMenu() {
+        const grid = document.getElementById("menuGrid");
+        grid.innerHTML = menu.length === 0 ? "<p>Add items in Menu Settings first.</p>" : "";
+        menu.forEach(item => {
+            const btn = document.createElement("button");
+            btn.className = "menu-btn";
+            btn.innerHTML = `${item.name}<br>₦${item.price.toLocaleString()}`;
+            btn.onclick = () => {
+                if(!orders[activeTable]) orders[activeTable] = [];
+                let ex = orders[activeTable].find(o => o.name === item.name);
+                if(ex) ex.qty++; else orders[activeTable].push({...item, qty:1});
+                renderOrder();
+            };
+            grid.appendChild(btn);
+        });
+    }
+
+    function renderOrder() {
+        const box = document.getElementById("orderBox");
+        box.innerHTML = "";
+        let sub = 0;
+        (orders[activeTable] || []).forEach((item, idx) => {
+            sub += item.price * item.qty;
+            box.innerHTML += `
+                <div class="bill-row">
+                    <span style="width:40%">${item.name}</span>
+                    <div class="qty-btns">
+                        <button onclick="adjustQty(${idx}, -1)">-</button>
+                        <span>${item.qty}</span>
+                        <button onclick="adjustQty(${idx}, 1)">+</button>
+                    </div>
+                    <span style="width:25%; text-align:right">₦${(item.price * item.qty).toLocaleString()}</span>
+                </div>`;
+        });
+        const tax = sub * 0.125;
+        document.getElementById("subT").innerText = "₦" + sub.toLocaleString();
+        document.getElementById("taxT").innerText = "₦" + tax.toLocaleString();
+        document.getElementById("grandT").innerText = "₦" + (sub + tax).toLocaleString();
+        localStorage.setItem("f_orders", JSON.stringify(orders));
+    }
+
+    function adjustQty(idx, amt) {
+        orders[activeTable][idx].qty += amt;
+        if(orders[activeTable][idx].qty <= 0) orders[activeTable].splice(idx, 1);
+        renderOrder();
+    }
+
+    // 5. PAYMENT & RECEIPT (GRID YABA STYLE)
+    function processPayment() {
+        const total = document.getElementById("grandT").innerText;
+        if(!orders[activeTable] || orders[activeTable].length === 0) return;
         
-        <div id="inventoryPage" class="page-content" style="display:none;">
-            <div class="topBar"><h2>Inventory</h2><button onclick="goToTables()" class="back-btn">← Back</button></div>
-            <div id="inventoryList"></div>
-        </div>
+        const method = prompt("Select Payment Method:\n1. Cash\n2. Transfer\n3. Card");
+        if(!method) return;
 
-        <div id="addMenuPage" class="page-content" style="display:none;">
-            <div class="topBar"><h2>Menu</h2><button onclick="goToTables()" class="back-btn">← Back</button></div>
-            <div class="login-container">
-                <input type="text" id="newItemName" placeholder="Name"><input type="number" id="newItemPrice" placeholder="Price"><button onclick="saveNewItem()">Save</button>
+        // Build Receipt
+        let itemsHtml = "";
+        orders[activeTable].forEach(i => {
+            itemsHtml += `<div style="display:flex; justify-content:space-between;"><span>${i.name} x${i.qty}</span><span>₦${(i.price*i.qty).toLocaleString()}</span></div>`;
+        });
+
+        const printArea = document.getElementById("printSection");
+        printArea.innerHTML = `
+            <center>
+                <h2 style="margin:0;">FOLA RESTAURANT</h2>
+                <p style="font-size:12px;">3 IRETI STREET SABO YABA<br>08130893832</p>
+                <hr style="border:1px dashed #000;">
+                <p style="font-size:12px;">ACCOUNT: FOLA RESTAURANT (OPAY)<br>6104491165</p>
+                <hr style="border:1px dashed #000;">
+                <h3 style="margin:5px 0;">PROFORMA INVOICE</h3>
+                <p style="font-size:12px; text-align:left;">Table: ${activeTable}<br>Staff: ${loggedInUser.user}</p>
+                <hr style="border:1px dashed #000;">
+            </center>
+            <div style="font-size:12px;">${itemsHtml}</div>
+            <hr style="border:1px dashed #000;">
+            <div style="text-align:right; font-size:14px;">
+                <p>Subtotal: ${document.getElementById("subT").innerText}</p>
+                <p>Service (12.5%): ${document.getElementById("taxT").innerText}</p>
+                <p><b>TOTAL: ${total}</b></p>
             </div>
-        </div>
-    </div>
-</div>
+            <center><p style="font-size:10px;">${new Date().toLocaleString()}<br>*** THANK YOU ***</p></center>
+        `;
 
-<div id="printSection" style="display:none; font-family: monospace; width: 300px; padding: 10px; color: black; background: white;">
-    <center>
-        <h2 style="margin:0;">FOLA RESTAURANT</h2>
-        <p style="font-size: 11px;">3 IRETI STREET SABO YABA<br>08130893832</p>
-    </center>
-    <hr style="border: 1px dashed black;">
-    <div style="font-size: 12px;">
-        <p><b>ACCOUNT DETAILS:</b></p>
-        <p>FOLA RESTAURANT (OPAY)<br>6104491165 / 6104491168</p>
-    </div>
-    <hr style="border: 1px dashed black;">
-    <p style="text-align:center;">PROFORMA INVOICE</p>
-    <hr style="border: 1px dashed black;">
-    <div style="display:flex; justify-content:space-between; font-size: 12px;">
-        <span>Table: <span id="pTable"></span></span>
-        <span>Covers: 1</span>
-    </div>
-    <hr style="border: 1px dashed black;">
-    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size: 12px;">
-        <span style="width:50%;">Description</span>
-        <span>Qty</span>
-        <span>Value</span>
-    </div>
-    <hr style="border: 1px dashed black;">
-    <div id="pItems" style="font-size: 12px;"></div>
-    <hr style="border: 1px dashed black;">
-    <div style="text-align:right; font-size: 13px;">
-        <p>Sub-Total: ₦<span id="pSub"></span></p>
-        <p>Service Charge: ₦<span id="pService"></span></p>
-        <p><b>TOTAL: ₦<span id="pTotal"></span></b></p>
-    </div>
-    <hr style="border: 1px dashed black;">
-    <p style="font-size: 10px;">Waitron: <span id="pStaff"></span></p>
-    <p style="font-size: 10px;">Time: <span id="pTime"></span></p>
-</div>
+        window.print();
+        
+        // Log Sale
+        sales.push({ date: new Date().toISOString().split('T')[0], total: parseFloat(total.replace(/[₦,]/g, '')), staff: loggedInUser.user });
+        delete orders[activeTable];
+        localStorage.setItem("f_sales", JSON.stringify(sales));
+        localStorage.setItem("f_orders", JSON.stringify(orders));
+        goToTables();
+    }
 
-<script src="app.js"></script>
+    // 6. ADMIN UTILS
+    function saveItem() {
+        const n = document.getElementById("itemName").value;
+        const p = document.getElementById("itemPrice").value;
+        if(!n || !p) return alert("Fill all fields");
+        menu.push({name: n, price: parseInt(p)});
+        localStorage.setItem("f_menu", JSON.stringify(menu));
+        alert("Saved!");
+        document.getElementById("itemName").value = "";
+        document.getElementById("itemPrice").value = "";
+    }
+
+    function saveUser() {
+        const u = document.getElementById("newU").value;
+        const p = document.getElementById("newP").value;
+        const r = document.getElementById("newR").value;
+        users.push({user:u, pass:p, role:r});
+        localStorage.setItem("f_users", JSON.stringify(users));
+        renderUserList();
+    }
+
+    function renderUserList() {
+        const d = document.getElementById("userListDisplay");
+        d.innerHTML = "<h4>Active Staff</h4>";
+        users.forEach(u => d.innerHTML += `<div>${u.user} (${u.role})</div>`);
+    }
+
+    function renderAudit() {
+        const date = document.getElementById("auditDate").value;
+        const div = document.getElementById("auditReport");
+        let dayTotal = 0;
+        sales.filter(s => s.date === date).forEach(s => dayTotal += s.total);
+        div.innerHTML = `<h3>Total Sales for ${date}</h3><h1 style="color:#10b981;">₦${dayTotal.toLocaleString()}</h1>`;
+    }
+</script>
 </body>
 </html>
