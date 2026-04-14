@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOLA POS SYSTEM</title>
+    <title>FOLA POS SYSTEM - PRO</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,108 +13,89 @@
     <div class="login-container">
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
-        <select id="role">
-            <option value="waiter">Waiter</option>
-            <option value="cashier">Cashier</option>
-            <option value="admin">Admin</option>
-        </select>
-        <button onclick="login()">Login</button>
+        <button onclick="login()">Secure Login</button>
     </div>
 </div>
 
-<div id="dashboardPage" class="page" style="display:none;">
-    <h2 style="text-align:center; padding-top:30px;">DASHBOARD</h2>
-    <div class="dashBox" onclick="goToAddMenu()">➕ Add Menu</div>
-    <div class="dashBox" onclick="goToTables()">🪑 Select Table</div>
-    <div class="dashBox" onclick="goToSales()">📊 Sales Report</div>
-    <div class="dashBox" onclick="goToInventory()">📦 Inventory</div>
-    <div class="dashBox" onclick="signOut()" style="background:#ef4444; color:white;">🚪 Sign Out</div>
-</div>
-
-<div id="addMenuPage" class="page" style="display:none;">
-    <div class="topBar">
-        <h2>Add Menu Item</h2>
-        <button onclick="goToDashboard()">← Back</button>
-    </div>
-    <div class="login-container">
-        <input type="text" id="newItemName" placeholder="Item Name">
-        <input type="number" id="newItemPrice" placeholder="Price (₦)">
-        <select id="newItemCategory">
-            <option value="Food">Food</option>
-            <option value="Drinks">Drinks</option>
-        </select>
-        <button onclick="saveNewItem()">Save Item</button>
-    </div>
-</div>
-
-<div id="inventoryPage" class="page" style="display:none;">
-    <div class="topBar">
-        <h2>Inventory Management</h2>
-        <button onclick="goToDashboard()">← Back</button>
-    </div>
-    <div id="inventoryList" class="report-container"></div>
-</div>
-
-<div id="salesPage" class="page" style="display:none;">
-    <div class="topBar">
-        <h2>Sales Report</h2>
-        <button onclick="goToDashboard()">← Back</button>
-    </div>
-    <div class="report-controls" style="padding:10px 20px;">
-        <input type="date" id="reportDate" onchange="renderSalesReport()">
-        <button onclick="window.print()">🖨 Print Report</button>
-    </div>
-    <div id="salesSlip" class="slip-view">
-        <h1 class="center">FOLA POS SYSTEM</h1>
-        <p class="center" id="slipDateDisplay"></p>
-        <hr>
-        <div id="salesItemsList"></div>
-        <hr>
-        <div id="slipTotal" style="font-weight:bold;"></div>
-    </div>
-</div>
-
-<div id="tablePage" class="page" style="display:none;">
-    <div class="topBar">
-        <h2>Select Table</h2>
-        <button onclick="goToDashboard()">← Back</button>
-    </div>
-    <div id="tableGrid"></div>
-</div>
-
-<div id="posPage" class="page" style="display:none;">
-    <div class="topBar">
-        <button onclick="goToTables()">⬅ Tables</button>
-        <h3 id="activeTableTitle"></h3>
-        <div style="display:flex; gap:10px;">
-            <button onclick="printBill()" style="background:#f59e0b;">🖨 Print Bill</button>
-            <button onclick="openPaymentModal()" style="background:#10b981;">✅ Finish & Pay</button>
+<div id="mainApp" style="display:none; display: flex; height: 100vh;">
+    
+    <div class="side-nav">
+        <div class="nav-brand">FOLA POS PRO</div>
+        <div class="nav-list">
+            <div class="nav-item" onclick="goToTables()">🪑 Order Management</div>
+            <div class="nav-item" onclick="goToAddMenu()">➕ Menu Management</div>
+            <div class="nav-item" onclick="goToInventory()">📦 Inventory Tracking</div>
+            <div class="nav-item" onclick="goToSales()">📊 Sales & Audit</div>
+            <div class="nav-item" onclick="goToExpenses()">💸 Expense Tracking</div>
+            <div class="nav-item" onclick="signOut()" style="margin-top: auto; color: #ef4444; border-top: 1px solid #374151;">🚪 Logout</div>
         </div>
     </div>
-    <div class="container">
-        <div class="left">
-            <div id="menuGrid"></div>
-        </div>
-        <div class="right">
-            <h3>Current Order</h3>
-            <input type="text" id="orderNote" placeholder="Special Instructions (e.g. No Onions)" style="margin-bottom:10px; border:1px solid #374151; background:#1f2937; color:white;">
-            <div id="orderBox"></div>
-            <hr>
-            <h3 style="color:#10b981;">Grand Total: ₦<span id="total">0</span></h3>
-        </div>
-    </div>
-</div>
 
-<div id="billPrintView" class="slip-view" style="display:none;">
-    <h1 class="center">FOLA POS SYSTEM</h1>
-    <h3 class="center" id="billTableTitle"></h3>
-    <p class="center" id="billDateTime"></p>
-    <p class="center" id="billNoteView" style="font-style:italic; border:1px dashed #ccc; padding:5px;"></p>
-    <hr>
-    <div id="billItemsList"></div>
-    <hr>
-    <h2 id="billTotal" class="center"></h2>
-    <p class="center">Thank you for your patronage!</p>
+    <div class="content-area">
+        
+        <div id="tablePage" class="page-content" style="display:none;">
+            <div class="topBar"><h2>Table Assignment</h2></div>
+            <div id="tableGrid"></div>
+        </div>
+
+        <div id="posPage" class="page-content" style="display:none;">
+            <div class="topBar">
+                <h3 id="activeTableTitle"></h3>
+                <div style="display:flex; gap:10px;">
+                    <button onclick="openSplitModal()" style="background:#6366f1; width:auto;">Split Bill</button>
+                    <button onclick="openPaymentModal()" style="background:#10b981; width:auto;">Finish & Pay</button>
+                </div>
+            </div>
+            <div class="container">
+                <div class="left"><div id="menuGrid"></div></div>
+                <div class="right">
+                    <select id="orderType"><option>Dine-In</option><option>Takeaway</option><option>Delivery</option></select>
+                    <input type="text" id="orderNote" placeholder="Special Instructions (e.g. No Spicy)">
+                    <div id="orderBox"></div>
+                    <hr>
+                    <h3 style="color:#10b981;">Grand Total: ₦<span id="total">0</span></h3>
+                </div>
+            </div>
+        </div>
+
+        <div id="salesPage" class="page-content" style="display:none;">
+            <div class="topBar"><h2>Financial Audit Trail</h2></div>
+            <div class="report-controls">
+                <input type="date" id="reportDate" onchange="renderFullReport()">
+            </div>
+            <div class="audit-grid">
+                <div id="auditLog" class="report-container" style="background:#1f2937; height:300px; overflow-y:auto; border-radius:8px; font-size:0.85em; padding:15px;"></div>
+                <div id="reconView" class="slip-view" style="margin:0;"></div>
+            </div>
+        </div>
+
+        <div id="expensePage" class="page-content" style="display:none;">
+            <div class="topBar"><h2>Record Daily Expenses</h2></div>
+            <div class="login-container">
+                <input type="text" id="expDesc" placeholder="Description (e.g. Diesel/Market)">
+                <input type="number" id="expAmount" placeholder="Amount (₦)">
+                <select id="expCat"><option>Utilities</option><option>Raw Materials</option><option>Other</option></select>
+                <button onclick="logExpense()">Log Expense</button>
+            </div>
+            <div id="expenseList" class="report-container"></div>
+        </div>
+
+        <div id="addMenuPage" class="page-content" style="display:none;">
+            <div class="topBar"><h2>Menu Management</h2></div>
+            <div class="login-container">
+                <input type="text" id="newItemName" placeholder="Item Name">
+                <input type="number" id="newItemPrice" placeholder="Price">
+                <select id="newItemCategory"><option value="Food">Food</option><option value="Drinks">Drinks</option></select>
+                <button onclick="saveNewItem()">Add to Menu</button>
+            </div>
+        </div>
+
+        <div id="inventoryPage" class="page-content" style="display:none;">
+            <div class="topBar"><h2>Inventory & Stock Levels</h2></div>
+            <div id="inventoryList" class="report-container"></div>
+        </div>
+
+    </div>
 </div>
 
 <script src="app.js"></script>
