@@ -1,40 +1,250 @@
-body { margin: 0; font-family: 'Segoe UI', Arial; background: #0b1220; color: white; }
-.page { width: 100%; }
+/* style.css - POS/Inventory Management System Styles */
 
-.main-title { text-align: center; font-size: 3rem; font-weight: 800; margin-top: 50px; color: #ffffff; }
+body { 
+    margin: 0; 
+    font-family: 'Segoe UI', Arial; 
+    background: #0b1220; 
+    color: white; 
+}
 
-.login-container { display: flex; flex-direction: column; align-items: center; max-width: 350px; margin: 20px auto; }
-input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: none; }
-button { background: #3b82f6; color: white; font-weight: bold; cursor: pointer; }
+.page { 
+    width: 100%; 
+}
 
-.topBar { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: #1f2937; position: sticky; top: 0; z-index: 100; }
-.topBar button { width: auto; padding: 8px 15px; margin: 0; }
+.main-title { 
+    text-align: center; 
+    font-size: 3rem; 
+    font-weight: 800; 
+    margin-top: 50px; 
+    color: #ffffff; 
+}
 
-.dashBox { background: white; color: #0b1220; padding: 25px; margin: 15px auto; width: 80%; border-radius: 12px; font-weight: bold; cursor: pointer; text-align: center; }
+.login-container { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    max-width: 350px; 
+    margin: 20px auto; 
+}
 
-.orderItem { background: #1f2937; padding: 12px; margin: 8px 0; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
-.qty-controls { display: flex; justify-content: space-between; align-items: center; }
-.qty-btn { width: 35px !important; height: 35px !important; padding: 0 !important; border-radius: 50% !important; font-size: 1.2rem; }
+input, select, button { 
+    width: 100%; 
+    padding: 12px; 
+    margin: 8px 0; 
+    border-radius: 6px; 
+    border: none; 
+    font-size: 1rem; 
+    box-sizing: border-box; 
+}
 
-.report-container { padding: 20px; max-width: 600px; margin: 0 auto; }
-.inventory-row { display: flex; justify-content: space-between; align-items: center; background: #1f2937; padding: 10px; margin-bottom: 5px; border-radius: 4px; }
-.inventory-row input { width: 70px; text-align: center; }
+input, select { 
+    background: #f9fafb; 
+    color: #111827; 
+}
 
-.slip-view { background: white; color: black; padding: 30px; max-width: 400px; margin: 20px auto; border-radius: 4px; }
-.center { text-align: center; }
-.slip-item { display: grid; grid-template-columns: 2fr 1fr 1fr; margin-bottom: 8px; border-bottom: 1px dashed #ccc; }
+button { 
+    background: #3b82f6; 
+    color: white; 
+    font-weight: bold; 
+    cursor: pointer; 
+}
 
-#tableGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 12px; padding: 20px; }
-.tableBox { background: #10b981; padding: 18px; text-align: center; border-radius: 8px; cursor: pointer; font-weight: bold; }
-.container { display: flex; height: calc(100vh - 60px); }
-.left { width: 70%; background: #111827; padding: 15px; overflow-y: auto; }
-.right { width: 30%; padding: 15px; border-left: 2px solid #1f2937; }
-#menuGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.menuItem { background: #1f2937; padding: 15px; border-radius: 8px; text-align: center; cursor: pointer; }
+button:hover { 
+    opacity: 0.9; 
+}
+
+.topBar { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 10px 20px; 
+    background: #1f2937; 
+    position: sticky; 
+    top: 0; 
+    z-index: 100; 
+}
+
+.topBar button { 
+    width: auto; 
+    padding: 8px 15px; 
+    margin: 0; 
+}
+
+.dashBox { 
+    background: white; 
+    color: #0b1220; 
+    padding: 25px; 
+    margin: 15px auto; 
+    width: 80%; 
+    border-radius: 12px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    text-align: center; 
+    font-size: 1.1rem; 
+    transition: transform 0.1s; 
+}
+
+.dashBox:hover { 
+    transform: scale(1.02); 
+}
+
+.orderItem { 
+    background: #1f2937; 
+    padding: 12px; 
+    margin: 8px 0; 
+    border-radius: 8px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; 
+}
+
+.qty-controls { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
+
+.qty-btn { 
+    width: 35px !important; 
+    height: 35px !important; 
+    padding: 0 !important; 
+    border-radius: 50% !important; 
+    font-size: 1.2rem; 
+}
+
+.report-container { 
+    padding: 20px; 
+    max-width: 600px; 
+    margin: 0 auto; 
+}
+
+.inventory-row { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    background: #1f2937; 
+    padding: 10px; 
+    margin-bottom: 5px; 
+    border-radius: 4px; 
+}
+
+.inventory-row input { 
+    width: 70px; 
+    text-align: center; 
+}
+
+.slip-view { 
+    background: white; 
+    color: black; 
+    padding: 30px; 
+    max-width: 400px; 
+    margin: 20px auto; 
+    border-radius: 4px; 
+}
+
+.center { 
+    text-align: center; 
+}
+
+.slip-item { 
+    display: grid; 
+    grid-template-columns: 2fr 1fr 1fr; 
+    margin-bottom: 8px; 
+    border-bottom: 1px dashed #ccc; 
+    padding-bottom: 4px; 
+}
+
+#tableGrid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); 
+    gap: 12px; 
+    padding: 20px; 
+}
+
+.tableBox { 
+    background: #10b981; 
+    padding: 18px; 
+    text-align: center; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    font-size: 0.85rem; 
+    transition: background 0.2s; 
+}
+
+.tableBox:hover { 
+    background: #059669; 
+}
+
+.container { 
+    display: flex; 
+    height: calc(100vh - 60px); 
+}
+
+.left { 
+    width: 70%; 
+    background: #111827; 
+    padding: 15px; 
+    overflow-y: auto; 
+}
+
+.right { 
+    width: 30%; 
+    padding: 15px; 
+    border-left: 2px solid #1f2937; 
+    overflow-y: auto; 
+}
+
+#menuGrid { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 10px; 
+}
+
+.menuItem { 
+    background: #1f2937; 
+    padding: 15px; 
+    border-radius: 8px; 
+    text-align: center; 
+    cursor: pointer; 
+    transition: background 0.2s; 
+}
+
+.menuItem:hover { 
+    background: #374151; 
+}
+
+.report-controls { 
+    display: flex; 
+    gap: 10px; 
+    align-items: center; 
+    flex-wrap: wrap; 
+}
+
+.report-controls input { 
+    width: auto; 
+    background: #f9fafb; 
+    color: #111827; 
+}
+
+.report-controls button { 
+    width: auto; 
+}
 
 /* PRINT SETTINGS */
 @media print {
-    body * { visibility: hidden; }
-    #billPrintView, #billPrintView * { visibility: visible; }
-    #billPrintView { position: absolute; left: 0; top: 0; width: 100%; border: none; }
+    body * { 
+        visibility: hidden; 
+    }
+    #billPrintView, #billPrintView * { 
+        visibility: visible; 
+    }
+    #billPrintView { 
+        position: absolute; 
+        left: 0; 
+        top: 0; 
+        width: 100%; 
+        border: none; 
+        display: block !important; 
+    }
 }
