@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -23,34 +24,46 @@
 </div>
 
 <div id="dashboardPage" class="page" style="display:none;">
-    <h2 style="text-align:center;">DASHBOARD</h2>
-    <div class="dashBox" onclick="goToAddMenu()">Add Menu</div>
-    <div class="dashBox" onclick="goToTables()">Select Table</div>
-    <div class="dashBox" onclick="goToSales()">Sales Report</div>
-    <div class="dashBox" onclick="goToInventory()">Inventory</div>
-    <div class="dashBox" onclick="signOut()">Sign Out</div>
+    <h2 style="text-align:center; padding-top:30px;">DASHBOARD</h2>
+    <div class="dashBox" onclick="goToAddMenu()">➕ Add Menu</div>
+    <div class="dashBox" onclick="goToTables()">🪑 Select Table</div>
+    <div class="dashBox" onclick="goToSales()">📊 Sales Report</div>
+    <div class="dashBox" onclick="goToInventory()">📦 Inventory</div>
+    <div class="dashBox" onclick="signOut()" style="background:#ef4444; color:white;">🚪 Sign Out</div>
 </div>
 
 <div id="addMenuPage" class="page" style="display:none;">
-    <div class="topBar"><h2>Add Menu Item</h2><button onclick="goToDashboard()">Back</button></div>
+    <div class="topBar">
+        <h2>Add Menu Item</h2>
+        <button onclick="goToDashboard()">← Back</button>
+    </div>
     <div class="login-container">
         <input type="text" id="newItemName" placeholder="Item Name">
         <input type="number" id="newItemPrice" placeholder="Price (₦)">
-        <select id="newItemCategory"><option value="Food">Food</option><option value="Drinks">Drinks</option></select>
-        <button onclick="saveNewItem()">Save</button>
+        <select id="newItemCategory">
+            <option value="Food">Food</option>
+            <option value="Drinks">Drinks</option>
+        </select>
+        <button onclick="saveNewItem()">Save Item</button>
     </div>
 </div>
 
 <div id="inventoryPage" class="page" style="display:none;">
-    <div class="topBar"><h2>Inventory Management</h2><button onclick="goToDashboard()">Back</button></div>
+    <div class="topBar">
+        <h2>Inventory Management</h2>
+        <button onclick="goToDashboard()">← Back</button>
+    </div>
     <div id="inventoryList" class="report-container"></div>
 </div>
 
 <div id="salesPage" class="page" style="display:none;">
-    <div class="topBar"><h2>Sales Report</h2><button onclick="goToDashboard()">Back</button></div>
-    <div class="report-controls">
+    <div class="topBar">
+        <h2>Sales Report</h2>
+        <button onclick="goToDashboard()">← Back</button>
+    </div>
+    <div class="report-controls" style="padding:10px 20px;">
         <input type="date" id="reportDate" onchange="renderSalesReport()">
-        <button onclick="window.print()">Print Slip</button>
+        <button onclick="window.print()">🖨 Print Report</button>
     </div>
     <div id="salesSlip" class="slip-view">
         <h1 class="center">FOLA POS SYSTEM</h1>
@@ -58,14 +71,14 @@
         <hr>
         <div id="salesItemsList"></div>
         <hr>
-        <h2 id="slipTotal">Total: ₦0</h2>
+        <div id="slipTotal" style="font-weight:bold;">Total: ₦0</div>
     </div>
 </div>
 
 <div id="tablePage" class="page" style="display:none;">
     <div class="topBar">
         <h2>Select Table</h2>
-        <button onclick="goToDashboard()">Back to Dashboard</button>
+        <button onclick="goToDashboard()">← Back to Dashboard</button>
     </div>
     <div id="tableGrid"></div>
 </div>
@@ -75,17 +88,19 @@
         <button onclick="goToTables()">⬅ Tables</button>
         <h3 id="activeTableTitle"></h3>
         <div style="display:flex; gap:10px;">
-            <button onclick="printBill()" style="background:#f59e0b;">Print Bill</button>
-            <button onclick="openPaymentModal()" style="background:#10b981;">Finish & Pay</button>
+            <button onclick="printBill()" style="background:#f59e0b;">🖨 Print Bill</button>
+            <button onclick="openPaymentModal()" style="background:#10b981;">✅ Finish & Pay</button>
         </div>
     </div>
     <div class="container">
-        <div class="left"><div id="menuGrid"></div></div>
+        <div class="left">
+            <div id="menuGrid"></div>
+        </div>
         <div class="right">
             <h3>Current Order</h3>
             <div id="orderBox"></div>
             <hr>
-            <h3>Total: ₦<span id="total">0</span></h3>
+            <h3 style="color:#10b981;">Grand Total: ₦<span id="total">0</span></h3>
         </div>
     </div>
 </div>
@@ -102,5 +117,6 @@
 </div>
 
 <script src="app.js"></script>
+
 </body>
 </html>
