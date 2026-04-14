@@ -70,14 +70,14 @@
         <hr>
         <div id="salesItemsList"></div>
         <hr>
-        <div id="slipTotal" style="font-weight:bold;">Total: ₦0</div>
+        <div id="slipTotal" style="font-weight:bold;"></div>
     </div>
 </div>
 
 <div id="tablePage" class="page" style="display:none;">
     <div class="topBar">
         <h2>Select Table</h2>
-        <button onclick="goToDashboard()">← Back to Dashboard</button>
+        <button onclick="goToDashboard()">← Back</button>
     </div>
     <div id="tableGrid"></div>
 </div>
@@ -97,6 +97,7 @@
         </div>
         <div class="right">
             <h3>Current Order</h3>
+            <input type="text" id="orderNote" placeholder="Special Instructions (e.g. No Onions)" style="margin-bottom:10px; border:1px solid #374151; background:#1f2937; color:white;">
             <div id="orderBox"></div>
             <hr>
             <h3 style="color:#10b981;">Grand Total: ₦<span id="total">0</span></h3>
@@ -108,6 +109,7 @@
     <h1 class="center">FOLA POS SYSTEM</h1>
     <h3 class="center" id="billTableTitle"></h3>
     <p class="center" id="billDateTime"></p>
+    <p class="center" id="billNoteView" style="font-style:italic; border:1px dashed #ccc; padding:5px;"></p>
     <hr>
     <div id="billItemsList"></div>
     <hr>
@@ -116,6 +118,5 @@
 </div>
 
 <script src="app.js"></script>
-
 </body>
 </html>
