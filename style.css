@@ -1,35 +1,34 @@
-body { margin: 0; font-family: 'Segoe UI', Arial; background: #0b1220; color: white; }
-.page { width: 100%; }
-.main-title { text-align: center; font-size: 3rem; font-weight: 800; margin-top: 50px; color: #ffffff; }
-.login-container { display: flex; flex-direction: column; align-items: center; max-width: 350px; margin: 20px auto; }
-input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: none; font-size: 1rem; box-sizing: border-box; }
-input, select { background: #f9fafb; color: #111827; }
-button { background: #3b82f6; color: white; font-weight: bold; cursor: pointer; }
-button:hover { opacity: 0.9; }
-.topBar { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: #1f2937; position: sticky; top: 0; z-index: 100; }
-.topBar button { width: auto; padding: 8px 15px; margin: 0; }
-.dashBox { background: white; color: #0b1220; padding: 25px; margin: 15px auto; width: 80%; border-radius: 12px; font-weight: bold; cursor: pointer; text-align: center; font-size: 1.1rem; transition: transform 0.1s; }
-.dashBox:hover { transform: scale(1.02); }
-.orderItem { background: #1f2937; padding: 12px; margin: 8px 0; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
-.qty-controls { display: flex; justify-content: space-between; align-items: center; }
-.qty-btn { width: 35px !important; height: 35px !important; padding: 0 !important; border-radius: 50% !important; font-size: 1.2rem; }
-.report-container { padding: 20px; max-width: 600px; margin: 0 auto; }
-.inventory-row { display: flex; justify-content: space-between; align-items: center; background: #1f2937; padding: 10px; margin-bottom: 5px; border-radius: 4px; }
-.inventory-row input { width: 70px; text-align: center; }
-.slip-view { background: white; color: black; padding: 30px; max-width: 400px; margin: 20px auto; border-radius: 4px; }
-.center { text-align: center; }
-.slip-item { display: grid; grid-template-columns: 2fr 1fr 1fr; margin-bottom: 8px; border-bottom: 1px dashed #ccc; padding-bottom: 4px; }
-#tableGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; padding: 20px; }
-.tableBox { background: #10b981; padding: 18px; text-align: center; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: background 0.2s; }
-.tableBox:hover { background: #059669; }
-.container { display: flex; height: calc(100vh - 60px); }
-.left { width: 70%; background: #111827; padding: 15px; overflow-y: auto; }
-.right { width: 30%; padding: 15px; border-left: 2px solid #1f2937; overflow-y: auto; }
-#menuGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.menuItem { background: #1f2937; padding: 15px; border-radius: 8px; text-align: center; cursor: pointer; transition: background 0.2s; }
-.menuItem:hover { background: #374151; }
-@media print {
-    body * { visibility: hidden; }
-    #billPrintView, #billPrintView * { visibility: visible; }
-    #billPrintView { position: absolute; left: 0; top: 0; width: 100%; border: none; display: block !important; }
-}
+body { margin: 0; font-family: 'Segoe UI', Arial; background: #0b1220; color: white; display: flex; }
+.page { width: 100%; height: 100vh; }
+.main-title { text-align: center; font-size: 3rem; margin-top: 50px; }
+
+/* SIDEBAR */
+.side-nav { width: 260px; background: #1f2937; height: 100vh; display: flex; flex-direction: column; border-right: 1px solid #374151; }
+.nav-brand { padding: 30px 20px; font-size: 1.5rem; font-weight: bold; color: #3b82f6; text-align: center; }
+.nav-list { flex-grow: 1; display: flex; flex-direction: column; }
+.nav-item { padding: 18px 25px; cursor: pointer; border-bottom: 1px solid #111827; transition: 0.2s; font-size: 0.95rem; }
+.nav-item:hover { background: #3b82f6; color: white; }
+
+/* CONTENT */
+.content-area { flex-grow: 1; overflow-y: auto; background: #0b1220; height: 100vh; }
+.page-content { padding: 30px; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.topBar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1f2937; padding-bottom: 20px; margin-bottom: 20px; }
+.container { display: flex; gap: 20px; height: 70vh; }
+.left { flex: 2; overflow-y: auto; }
+.right { flex: 1; background: #111827; padding: 20px; border-radius: 12px; }
+
+/* POS ELEMENTS */
+#menuGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.menuItem { background: #1f2937; padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; }
+#tableGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; }
+.tableBox { background: #10b981; padding: 25px 10px; text-align: center; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.orderItem { background: #1f2937; padding: 10px; margin-bottom: 5px; border-radius: 5px; font-size: 0.9em; }
+
+/* FORM & SLIP */
+input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: none; box-sizing: border-box; }
+button { background: #3b82f6; color: white; cursor: pointer; font-weight: bold; }
+.slip-view { background: white; color: black; padding: 20px; border-radius: 8px; }
+.inventory-row { display: flex; justify-content: space-between; background: #1f2937; padding: 10px; margin-bottom: 5px; }
+.inventory-row input { width: 80px; margin: 0; }
